@@ -1,21 +1,26 @@
 import { useState } from "react";
 
-
 export default function App() {
-  const [items,setItems]= useState([]);
+  const [items, setItems] = useState([]);
 
-  function handleAddItems(item){
+  function handleAddItems(item) {
     setItems((items) => [...items, item]);
   }
- function handelDeleteItem(id){
-  setItems((items)=>items.filter((item)=>item.id!==id))
-
- }
+  function handelDeleteItem(id) {
+    setItems((items) => items.filter((item) => item.id !== id));
+  }
+  function handelToggelItem(newid) {
+    setItems((items) =>
+      items.map((item) =>
+        item.id === newid ? { ...item, packed : !item.packed } : item
+      )
+    );
+  }
   return (
     <div className="app">
       <Logo />
-      <Form onAddItems={handleAddItems}/>
-      <PackingList items={items} onDeleteItem={handelDeleteItem}/>
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} onDeleteItem={handelDeleteItem} onToggleItems={handelToggelItem} />
       <Stats />
     </div>
   );
@@ -24,16 +29,16 @@ export default function App() {
 function Logo() {
   return <h1>🌴 Far Away 🎒</h1>;
 }
-function Form({onAddItems}) {
+function Form({ onAddItems }) {
   const [description, setDescription] = useState("");
   const [quantity, setQuaantity] = useState(1);
 
   function handelSubmit(e) {
     e.preventDefault();
-    if(!description){
+    if (!description) {
       return;
     }
-    const newItem={description,quantity,packed:false,id:Date.now()};
+    const newItem = { description, quantity, packed: false, id: Date.now() };
 
     onAddItems(newItem);
 
@@ -67,7 +72,7 @@ function Form({onAddItems}) {
     </form>
   );
 }
-function PackingList({items,onDeleteItem}) {
+function PackingList({ items, onDeleteItem, onToggleItems}) {
   return (
     <div className="list">
       <ul>
@@ -75,20 +80,22 @@ function PackingList({items,onDeleteItem}) {
           (
             item // ai item ta akta array and niche aii array ta call hoche
           ) => (
-            <Item hello={item} onDeleteItem={onDeleteItem} key={item.id} /> // Item ta hoche akta component and hello ta prop and item ta hoche array
+            <Item hello={item} onDeleteItem={onDeleteItem} onToggleItems={onToggleItems}  key={item.id} /> // Item ta hoche akta component and hello ta prop and item ta hoche array
           )
         )}
       </ul>
     </div>
   );
 }
-function Item({ hello,onDeleteItem }) {//ai khane prop ta destructure hoi galo tai {} ar bhetore likh ta hoche
+function Item({ hello, onDeleteItem , onToggleItems}) {
+  //ai khane prop ta destructure hoi galo tai {} ar bhetore likh ta hoche
   return (
     <li>
+      <input type="checkbox" value={hello.packed} onChange={() => onToggleItems(hello.id)} />
       <span style={hello.packed ? { textDecoration: "line-through" } : {}}>
         {hello.quantity} {hello.description}
       </span>
-      <button onClick={()=>onDeleteItem(hello.id)}>❌</button>
+      <button onClick={() => onDeleteItem(hello.id)}>❌</button>
     </li>
   );
 }
@@ -99,6 +106,3 @@ function Stats() {
     </footer>
   );
 }
-
-
-
