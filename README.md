@@ -1,4 +1,4 @@
-# please ignore the comments 
+# PLEASE IGNORE THE COMMENTS
 
 # Getting Started with Create React App
 
